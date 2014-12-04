@@ -26,11 +26,11 @@
 /**
  Vertical alignment for text in a label whose bounds are larger than its text bounds
  */
-typedef NS_ENUM(NSInteger, TTTAttributedLabelVerticalAlignment) {
+typedef enum {
     TTTAttributedLabelVerticalAlignmentCenter   = 0,
     TTTAttributedLabelVerticalAlignmentTop      = 1,
     TTTAttributedLabelVerticalAlignmentBottom   = 2,
-};
+} TTTAttributedLabelVerticalAlignment;
 
 /**
  Determines whether the text to which this attribute applies has a strikeout drawn through itself.
@@ -41,11 +41,6 @@ extern NSString * const kTTTStrikeOutAttributeName;
  The background fill color. Value must be a `CGColorRef`. Default value is `nil` (no fill).
  */
 extern NSString * const kTTTBackgroundFillColorAttributeName;
-
-/**
- The padding for the background fill. Value must be a `UIEdgeInsets`. Default value is `UIEdgeInsetsZero` (no padding).
- */
-extern NSString * const kTTTBackgroundFillPaddingAttributeName;
 
 /**
  The background stroke color. Value must be a `CGColorRef`. Default value is `nil` (no stroke).
@@ -69,21 +64,16 @@ extern NSString * const kTTTBackgroundCornerRadiusAttributeName;
 @property (nonatomic, copy) id text;
 @end
 
-IB_DESIGNABLE
-
 /**
  `TTTAttributedLabel` is a drop-in replacement for `UILabel` that supports `NSAttributedString`, as well as automatically-detected and manually-added links to URLs, addresses, phone numbers, and dates.
  
- ## Differences Between `TTTAttributedLabel` and `UILabel`
+ # Differences Between `TTTAttributedLabel` and `UILabel`
  
- For the most part, `TTTAttributedLabel` behaves just like `UILabel`. The following are notable exceptions, in which `TTTAttributedLabel` may act differently:
+ For the most part, `TTTAttributedLabel` behaves just like `UILabel`. The following are notable exceptions, in which `TTTAttributedLabel` properties may act differently:
  
  - `text` - This property now takes an `id` type argument, which can either be a kind of `NSString` or `NSAttributedString` (mutable or immutable in both cases)
  - `lineBreakMode` - This property displays only the first line when the value is `UILineBreakModeHeadTruncation`, `UILineBreakModeTailTruncation`, or `UILineBreakModeMiddleTruncation`
  - `adjustsFontsizeToFitWidth` - Supported in iOS 5 and greater, this property is effective for any value of `numberOfLines` greater than zero. In iOS 4, setting `numberOfLines` to a value greater than 1 with `adjustsFontSizeToFitWidth` set to `YES` may cause `sizeToFit` to execute indefinitely.
- - `baselineAdjustment` - This property has no affect.
- - `textAlignment` - This property does not support justified alignment.
- - `NSTextAttachment` - This string attribute is not supported.
  
  Any properties affecting text or paragraph styling, such as `firstLineIndent` will only apply when text is set with an `NSString`. If the text is set with an `NSAttributedString`, these properties will not apply.
  
@@ -92,8 +82,6 @@ IB_DESIGNABLE
  `TTTAttributedLabel`, like `UILabel`, conforms to `NSCoding`. However, if the build target is set to less than iOS 6.0, `linkAttributes` and `activeLinkAttributes` will not be encoded or decoded. This is due to an runtime exception thrown when attempting to copy non-object CoreText values in dictionaries.
  
  @warning Any properties changed on the label after setting the text will not be reflected until a subsequent call to `setText:` or `setText:afterInheritingLabelAttributesAndConfiguringWithBlock:`. This is to say, order of operations matters in this case. For example, if the label text color is originally black when the text is set, changing the text color to red will have no effect on the display of the label until the text is set once again.
- 
- @bug Setting `attributedText` directly is not recommended, as it may cause a crash when attempting to access any links previously set. Instead, call `setText:`, passing an `NSAttributedString`.
  */
 @interface TTTAttributedLabel : UILabel <TTTAttributedLabel, UIGestureRecognizerDelegate>
 
@@ -113,16 +101,11 @@ IB_DESIGNABLE
 ///--------------------------------------------
 
 /**
- @deprecated Use `enabledTextCheckingTypes` property instead.
- */
-@property (nonatomic, assign) NSTextCheckingTypes dataDetectorTypes DEPRECATED_ATTRIBUTE;
-
-/**
  A bitmask of `NSTextCheckingType` which are used to automatically detect links in the label text.
-
- @warning You must specify `enabledTextCheckingTypes` before setting the `text`, with either `setText:` or `setText:afterInheritingLabelAttributesAndConfiguringWithBlock:`.
+ 
+ @warning You must specify `dataDetectorTypes` before setting the `text`, with either `setText:` or `setText:afterInheritingLabelAttributesAndConfiguringWithBlock:`.
  */
-@property (nonatomic, assign) NSTextCheckingTypes enabledTextCheckingTypes;
+@property (nonatomic, assign) NSTextCheckingTypes dataDetectorTypes;
 
 /**
  An array of `NSTextCheckingResult` objects for links detected or manually added to the label text.
@@ -137,19 +120,9 @@ IB_DESIGNABLE
 @property (nonatomic, strong) NSDictionary *linkAttributes;
 
 /**
- A dictionary containing the `NSAttributedString` attributes to be applied to links when they are in the active state. If `nil` or an empty `NSDictionary`, active links will not be styled. The default active link style is red and underlined.
+ A dictionary containing the `NSAttributedString` attributes to be applied to links when they are in the active state. Supply `nil` or an empty dictionary to opt out of active link styling. The default active link style is red and underlined.
  */
 @property (nonatomic, strong) NSDictionary *activeLinkAttributes;
-
-/**
- A dictionary containing the `NSAttributedString` attributes to be applied to links when they are in the inactive state, which is triggered a change in `tintColor` in iOS 7. If `nil` or an empty `NSDictionary`, inactive links will not be styled. The default inactive link style is gray and unadorned.
- */
-@property (nonatomic, strong) NSDictionary *inactiveLinkAttributes;
-
-/**
- The edge inset for the background of a link. The default value is `{0, -1, 0, -1}`.
- */
-@property (nonatomic, assign) UIEdgeInsets linkBackgroundEdgeInset;
 
 ///---------------------------------------
 /// @name Acccessing Text Style Attributes
@@ -158,25 +131,20 @@ IB_DESIGNABLE
 /**
  The shadow blur radius for the label. A value of 0 indicates no blur, while larger values produce correspondingly larger blurring. This value must not be negative. The default value is 0. 
  */
-@property (nonatomic, assign) IBInspectable CGFloat shadowRadius;
+@property (nonatomic, assign) CGFloat shadowRadius;
 
 /** 
  The shadow blur radius for the label when the label's `highlighted` property is `YES`. A value of 0 indicates no blur, while larger values produce correspondingly larger blurring. This value must not be negative. The default value is 0.
  */
-@property (nonatomic, assign) IBInspectable CGFloat highlightedShadowRadius;
+@property (nonatomic, assign) CGFloat highlightedShadowRadius;
 /** 
  The shadow offset for the label when the label's `highlighted` property is `YES`. A size of {0, 0} indicates no offset, with positive values extending down and to the right. The default size is {0, 0}.
  */
-@property (nonatomic, assign) IBInspectable CGSize highlightedShadowOffset;
+@property (nonatomic, assign) CGSize highlightedShadowOffset;
 /** 
  The shadow color for the label when the label's `highlighted` property is `YES`. The default value is `nil` (no shadow color).
  */
-@property (nonatomic, strong) IBInspectable UIColor *highlightedShadowColor;
-
-/**
- The amount to kern the next character. Default is standard kerning. If this attribute is set to 0.0, no kerning is done at all.
- */
-@property (nonatomic, assign) IBInspectable CGFloat kern;
+@property (nonatomic, strong) UIColor *highlightedShadowColor;
 
 ///--------------------------------------------
 /// @name Acccessing Paragraph Style Attributes
@@ -185,32 +153,17 @@ IB_DESIGNABLE
 /**
  The distance, in points, from the leading margin of a frame to the beginning of the paragraph's first line. This value is always nonnegative, and is 0.0 by default. 
  */
-@property (nonatomic, assign) IBInspectable CGFloat firstLineIndent;
+@property (nonatomic, assign) CGFloat firstLineIndent;
 
 /**
- @deprecated Use `lineSpacing` instead.
+ The space in points added between lines within the paragraph. This value is always nonnegative and is 0.0 by default. 
  */
-@property (nonatomic, assign) IBInspectable CGFloat leading DEPRECATED_ATTRIBUTE;
-
-/**
- The space in points added between lines within the paragraph. This value is always nonnegative and is 0.0 by default.
- */
-@property (nonatomic, assign) IBInspectable CGFloat lineSpacing;
-
-/**
- The minimum line height within the paragraph. If the value is 0.0, the minimum line height is set to the line height of the `font`. 0.0 by default.
- */
-@property (nonatomic, assign) IBInspectable CGFloat minimumLineHeight;
-
-/**
- The maximum line height within the paragraph. If the value is 0.0, the maximum line height is set to the line height of the `font`. 0.0 by default.
- */
-@property (nonatomic, assign) IBInspectable CGFloat maximumLineHeight;
+@property (nonatomic, assign) CGFloat leading;
 
 /**
  The line height multiple. This value is 1.0 by default.
  */
-@property (nonatomic, assign) IBInspectable CGFloat lineHeightMultiple;
+@property (nonatomic, assign) CGFloat lineHeightMultiple;
 
 /**
  The distance, in points, from the margin to the text container. This value is `UIEdgeInsetsZero` by default.
@@ -225,49 +178,19 @@ IB_DESIGNABLE
  - `right`: `kCTParagraphStyleSpecifierTailIndent`
  
  */
-@property (nonatomic, assign) IBInspectable UIEdgeInsets textInsets;
+@property (nonatomic, assign) UIEdgeInsets textInsets;
 
 /**
  The vertical text alignment for the label, for when the frame size is greater than the text rect size. The vertical alignment is `TTTAttributedLabelVerticalAlignmentCenter` by default.
  */
 @property (nonatomic, assign) TTTAttributedLabelVerticalAlignment verticalAlignment;
 
-///--------------------------------------------
-/// @name Accessing Truncation Token Appearance
-///--------------------------------------------
-
 /**
- @deprecated Use `attributedTruncationToken` instead.
+ The truncation token that appears at the end of the truncated line. `nil` by default.
+
+ @discussion When truncation is enabled for the label, by setting `lineBreakMode` to either `UILineBreakModeHeadTruncation`, `UILineBreakModeTailTruncation`, or `UILineBreakModeMiddleTruncation`, the token used to terminate the truncated line will be `truncationTokenString` if defined, otherwise the Unicode Character 'HORIZONTAL ELLIPSIS' (U+2026).
  */
-@property (nonatomic, strong) NSString *truncationTokenString DEPRECATED_ATTRIBUTE;
-
-/**
- @deprecated Use `attributedTruncationToken` instead.
- */
-@property (nonatomic, strong) NSDictionary *truncationTokenStringAttributes DEPRECATED_ATTRIBUTE;
-
-/**
- The attributed string to apply to the truncation token at the end of a truncated line. Overrides `truncationTokenStringAttributes` and `truncationTokenString`. If unspecified, attributes will fallback to `truncationTokenStringAttributes` and `truncationTokenString`.
- */
-@property (nonatomic, strong) IBInspectable NSAttributedString *attributedTruncationToken;
-
-
-///--------------------------------------------
-/// @name Calculating Size of Attributed String
-///--------------------------------------------
-
-/**
- Calculate and return the size that best fits an attributed string, given the specified constraints on size and number of lines.
-
- @param attributedString The attributed string.
- @param size The maximum dimensions used to calculate size.
- @param numberOfLines The maximum number of lines in the text to draw, if the constraining size cannot accomodate the full attributed string.
- 
- @return The size that fits the attributed string within the specified constraints.
- */
-+ (CGSize)sizeThatFitsAttributedString:(NSAttributedString *)attributedString
-                       withConstraints:(CGSize)size
-                limitedToNumberOfLines:(NSUInteger)numberOfLines;
+@property (nonatomic, strong) NSString *truncationTokenString;
 
 ///----------------------------------
 /// @name Setting the Text Attributes
@@ -382,15 +305,8 @@ afterInheritingLabelAttributesAndConfiguringWithBlock:(NSMutableAttributedString
 - (void)addLinkToTransitInformation:(NSDictionary *)components
                           withRange:(NSRange)range;
 
-/**
- Returns whether an `NSTextCheckingResult` is found at the give point.
- 
- @discussion This can be used together with `UITapGestureRecognizer` to tap interactions with overlapping views.
- 
- @param point The point inside the label.
- */
-- (BOOL)containslinkAtPoint:(CGPoint)point;
-
+//获取额外的AttributedString，子类可以实现此函数; zmz
+- (NSAttributedString*)getExternalAttributedString:(NSAttributedString*)text;
 @end
 
 /**
@@ -471,5 +387,6 @@ didSelectLinkWithTransitInformation:(NSDictionary *)components;
  */
 - (void)attributedLabel:(TTTAttributedLabel *)label
 didSelectLinkWithTextCheckingResult:(NSTextCheckingResult *)result;
+
 
 @end
