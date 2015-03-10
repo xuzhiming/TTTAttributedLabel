@@ -307,6 +307,8 @@ afterInheritingLabelAttributesAndConfiguringWithBlock:(NSMutableAttributedString
 
 //获取额外的AttributedString，子类可以实现此函数; zmz
 - (NSAttributedString*)getExternalAttributedString:(NSAttributedString*)text;
+
+@property (nonatomic, strong)NSDictionary *customLinkSlice;
 @end
 
 /**
