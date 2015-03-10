@@ -789,17 +789,21 @@ static inline NSAttributedString * NSAttributedStringBySettingColorFromContext(N
                         }
                     });
                 }
-                
-                [self.customLinkSlice enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-                    NSMutableDictionary *slice = obj;
-                    if (slice.patten == 2) {
-                        NSRange sepRange = [slice.orignalString rangeOfString:@"|"];
-                        NSString *orignalStr = [slice.orignalString substringWithRange:NSMakeRange(1, sepRange.location-1)];
-                        NSURL *customUrl = [NSURL URLWithString:orignalStr];
-                        NSLog(@"customUrl:%@", customUrl);
-                        [self addLinkToURL:customUrl withRange:NSMakeRange(slice.location, slice.replaceString.length)];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if ([[self.attributedText string] isEqualToString:[text string]]) {
+                        [self.customLinkSlice enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                            NSMutableDictionary *slice = obj;
+                            if (slice.patten == 2) {
+                                NSRange sepRange = [slice.orignalString rangeOfString:@"|"];
+                                NSString *orignalStr = [slice.orignalString substringWithRange:NSMakeRange(1, sepRange.location-1)];
+                                NSURL *customUrl = [NSURL URLWithString:orignalStr];
+                                NSLog(@"customUrl:%@", customUrl);
+                                [self addLinkToURL:customUrl withRange:NSMakeRange(slice.location, slice.replaceString.length)];
+                            }
+                        }];
                     }
-                }];
+                });
+                
             }
             
         });
