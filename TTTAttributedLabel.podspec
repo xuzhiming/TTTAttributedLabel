@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
   s.name = 'TTTAttributedLabel'
-  s.version = '1.11.1'
+  s.version = '1.11.2'
   s.authors = {'Mattt Thompson' => 'm@mattt.me'}
   s.homepage = 'https://github.com/xuzhiming/TTTAttributedLabel/'
   #s.social_media_url = 'https://twitter.com/mattt'
   s.summary = 'A drop-in replacement for UILabel that supports attributes, data detectors, links, and more.'
-  s.source = {:git => 'https://github.com/xuzhiming/TTTAttributedLabel.git', :tag => '1.11.1'}
+  s.source = {:git => 'https://github.com/xuzhiming/TTTAttributedLabel.git', :tag => '1.11.2'}
   s.license = 'MIT'
 
   s.requires_arc = true
