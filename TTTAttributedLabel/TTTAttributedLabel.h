@@ -85,6 +85,8 @@ extern NSString * const kTTTBackgroundCornerRadiusAttributeName;
  */
 @interface TTTAttributedLabel : UILabel <TTTAttributedLabel, UIGestureRecognizerDelegate>
 
+@property (nonatomic, assign) BOOL bIgnoreLinkColor;
+
 ///-----------------------------
 /// @name Accessing the Delegate
 ///-----------------------------

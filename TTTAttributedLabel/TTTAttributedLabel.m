@@ -203,6 +203,7 @@ static inline NSAttributedString * NSAttributedStringBySettingColorFromContext(N
 }
 
 @dynamic text;
+@synthesize bIgnoreLinkColor = _bIgnoreLinkColor;
 @synthesize attributedText = _attributedText;
 @synthesize inactiveAttributedText = _inactiveAttributedText;
 @synthesize renderedAttributedText = _renderedAttributedText;
@@ -250,9 +251,10 @@ static inline NSAttributedString * NSAttributedStringBySettingColorFromContext(N
     
     NSMutableDictionary *mutableActiveLinkAttributes = [NSMutableDictionary dictionary];
     //[mutableActiveLinkAttributes setObject:[NSNumber numberWithBool:NO] forKey:(NSString *)kCTUnderlineStyleAttributeName];
+    UIColor *linkcolor = [UIColor colorWithRed:128/255.0 green:153/255.0 blue:187/255.0 alpha:1.0];//[UIColor colorWithRed:98/255.0 green:123/255.0 blue:173/255.0 alpha:1.0];
 
     if ([NSMutableParagraphStyle class]) {        
-        [mutableLinkAttributes setObject:[UIColor colorWithRed:128/255.0 green:153/255.0 blue:187/255.0 alpha:1.0] forKey:(NSString *)kCTForegroundColorAttributeName];
+        [mutableLinkAttributes setObject:linkcolor forKey:(NSString *)kCTForegroundColorAttributeName];
         [mutableActiveLinkAttributes setObject:[UIColor redColor] forKey:(NSString *)kCTForegroundColorAttributeName];
 
         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
@@ -773,7 +775,12 @@ static inline NSAttributedString * NSAttributedStringBySettingColorFromContext(N
         return;
     }
     text = [self getExternalAttributedString:text];
-    
+//    if (_bIgnoreLinkColor) {
+//        if ([text isKindOfClass:[NSMutableAttributedString class]]) {
+//            self.textColor = [UIColor blackColor];
+//            text = [[NSMutableAttributedString alloc] initWithString:((NSMutableAttributedString *)text).string attributes:NSAttributedStringAttributesFromLabel(self)];
+//        }
+//    }
     self.attributedText = text;
     self.activeLink = nil;
 
@@ -784,13 +791,13 @@ static inline NSAttributedString * NSAttributedStringBySettingColorFromContext(N
                 NSArray *results = [self.dataDetector matchesInString:[text string] options:0 range:NSMakeRange(0, [text length])];
                 if ([results count] > 0) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        if ([[self.attributedText string] isEqualToString:[text string]]) {
+                        if ([[self.attributedText string] isEqualToString:[text string]] && !self.bIgnoreLinkColor) {
                             [self addLinksWithTextCheckingResults:results attributes:self.linkAttributes];
                         }
                     });
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if ([[self.attributedText string] isEqualToString:[text string]]) {
+                    if ([[self.attributedText string] isEqualToString:[text string]] && !self.bIgnoreLinkColor) {
                         [self.customLinkSlice enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
                             NSMutableDictionary *slice = obj;
                             if (slice.patten == 2) {
