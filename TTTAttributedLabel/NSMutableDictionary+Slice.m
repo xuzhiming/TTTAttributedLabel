@@ -43,7 +43,7 @@
              }];
 }
 
--(instancetype)updateLocation:(int)location{
+-(instancetype)updateLocation:(NSUInteger)location{
     self[@"location"] = @(location);
     
     return self;

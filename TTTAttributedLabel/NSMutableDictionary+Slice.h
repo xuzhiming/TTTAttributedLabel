@@ -21,7 +21,7 @@
            replaceString:(id)replaceString
                   patten:(int)patten;
 
--(instancetype)updateLocation:(int)location;
+-(instancetype)updateLocation:(NSUInteger)location;
 
 -(void)setExtra:(NSDictionary *)extra;
 
