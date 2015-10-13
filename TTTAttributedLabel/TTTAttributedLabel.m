@@ -769,6 +769,13 @@ static inline NSAttributedString * NSAttributedStringBySettingColorFromContext(N
 
 #pragma mark - TTTAttributedLabel
 
+- (NSString *)encodeString:(NSString *)string
+{
+    NSString *result = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,  (CFStringRef)string, NULL, NULL, kCFStringEncodingUTF8));
+
+    return result;
+}
+
 - (void)setText:(id)text {
     if ([text isKindOfClass:[NSString class]]) {
         [self setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
@@ -808,6 +815,9 @@ static inline NSAttributedString * NSAttributedStringBySettingColorFromContext(N
                                 }else{
                                     link = [slice.orignalString substringWithRange:NSMakeRange(1, sepRange.location-1)];
                                 }
+                                //url escape
+//                                link = [link stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                                link = [self encodeString:link];
                                 NSURL *customUrl = [NSURL URLWithString:[link stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 //                                NSLog(@"customUrl:%@", customUrl);
                                 [self addLinkToURL:customUrl withRange:NSMakeRange(slice.location, slice.replaceString.length)];
