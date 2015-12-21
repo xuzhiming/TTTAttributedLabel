@@ -816,7 +816,7 @@ static inline NSAttributedString * NSAttributedStringBySettingColorFromContext(N
                                     link = [slice.orignalString substringWithRange:NSMakeRange(1, sepRange.location-1)];
                                 }
                                 //url escape
-//                                link = [link stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                                link = [link stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                                 link = [self encodeString:link];
                                 NSURL *customUrl = [NSURL URLWithString:[link stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 //                                NSLog(@"customUrl:%@", customUrl);

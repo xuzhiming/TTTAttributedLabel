@@ -32,7 +32,7 @@
     self[@"extra"] = extra;
 }
 
-+(instancetype)sliceWith:(int)location orignalString:(id)orignalString replaceString:(id)replaceString patten:(int)patten{
++(instancetype)sliceWith:(NSUInteger)location orignalString:(id)orignalString replaceString:(id)replaceString patten:(int)patten{
 //    return [[self alloc] initSliceWith:location orignalString:orignalString replaceString:replaceString];
     
     return [NSMutableDictionary dictionaryWithDictionary: @{

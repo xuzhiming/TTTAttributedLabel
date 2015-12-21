@@ -16,7 +16,7 @@
 @property(nonatomic, readonly)NSAttributedString *replaceString;
 @property(nonatomic, readonly)NSDictionary *extra;
 
-+(instancetype)sliceWith:(int)location
++(instancetype)sliceWith:(NSUInteger)location
            orignalString:(id)orignalString
            replaceString:(id)replaceString
                   patten:(int)patten;
